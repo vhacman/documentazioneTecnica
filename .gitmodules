@@ -1,0 +1,3 @@
+[submodule "brainstack-programming-notions"]
+	path = brainstack-programming-notions
+	url = git@github.com:vhacman/brainstack-programming-notions.git
