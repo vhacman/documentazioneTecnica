@@ -7,49 +7,47 @@ Repository con la documentazione e gli appunti del corso: Java, Database, Soft S
 ## Struttura
 
 ```
-├── 01_Database/                      Appunti e materiale teorico sui database
-├── 02_Soft_Skills/                   Materiale soft skills e certificazioni Scrum
 ├── JAVA-DOCUMENTAZIONE TEORICA/      Appunti completi sul corso Java e Spring Boot
+│   ├── 01_Fondamenti_Java/           Classi, variabili, tipi primitivi, costruttori, OOP
+│   ├── 02_Collezioni_e_Strutture_Dati/  Array, ArrayList, Set, Map, filter, reduce
+│   ├── 03_Eccezioni_e_Testing/      Try-catch, JUnit, gestione errori
+│   ├── 04_Design_Patterns_e_Architettura/  MVC, Spring Boot, architettura applicazione
+│   ├── 05_Spring_Boot/               Controller, RestController, JPA, Spring Data
+│   ├── 06_Web_e_Frontend/            HTML, CSS, JavaScript, Client-Server
+│   ├── 07_Database_e_SQL/            DDL, DML, SQLite, JOIN, relazioni
+│   └── 08_Materiale_Riferimento/    Libri, manuali, guide
 ├── SOFTSKILL/                        Appunti lezioni, materiale teorico e progetto di gruppo
-│   ├── 01_Appunti_Lezioni/
-│   ├── 02_Materiale_Teorico/
 │   └── 03_Progetto_Gruppo/           Progetto "Sviluppatori Anonimi" con mockup e artefatti Scrum
-└── brainstack-programming-notions/   Submodule: appunti di programmazione C/C++
+├── brainstack-programming-notions/   Submodule: appunti di programmazione C/C++
+└── LibroAngularFerdinando/          (ignorato da git)
 ```
 
 ---
 
 ## Contenuto
 
-### 01_Database
-Fondamenti di database relazionali: introduzione alle tabelle, DDL, DML e configurazione POM.
-
-### 02_Soft_Skills
-Materiale teorico su competenze trasversali, adattabilità, lavoro di squadra e guide Scrum Fundamentals.
-
 ### JAVA-DOCUMENTAZIONE TEORICA
-Documentazione del corso Java, organizzata per tema:
+Documentazione del corso Java organizzata per tema:
 
-- **Fondamenti** — classi, variabili, tipi primitivi, costruttori, scope e flusso di esecuzione
-- **OOP avanzata** — astrazione, interfacce, lambda, generics, type safety
-- **Strutture dati** — array, ArrayList, Set, Map, filter, reduce
-- **Controllo di flusso** — if, switch, cicli, operatore ternario, short-circuit
-- **Eccezioni** — try-catch-finally, gestione degli errori
-- **Architettura** — Client-Server, MVC, Spring Boot, Controller vs RestController
-- **Database** — DDL/DML, Spring Data JPA, SQL GROUP BY, SQLite
-- **Frontend** — HTML, CSS, JavaScript
-- **Altro** — caching, JUnit, factory method, HashMap
+- **01_Fondamenti_Java** — classi, variabili, tipi primitivi, costruttori, scope, flusso esecuzione, astrazione, interfacce, lambda, generics
+- **02_Collezioni_e_Strutture_Dati** — array, ArrayList, Set, Map, filter, reduce
+- **03_Eccezioni_e_Testing** — try-catch-finally, JUnit, test automatizzati
+- **04_Design_Patterns_e_Architettura** — MVC, Spring Boot, caching, factory method
+- **05_Spring_Boot** — Controller vs RestController, Spring Data JPA, annotazioni
+- **06_Web_e_Frontend** — HTML, CSS, JavaScript, architettura Client-Server, progetti
+- **07_Database_e_SQL** — DDL, DML, SQLite, GROUP BY, JOIN, relazioni, ereditarietà
+- **08_Materiale_Riferimento** — libri Java, manuali, guide Eclipse
 
 ### SOFTSKILL
-Appunti delle lezioni e materiale teorico sul corso Soft Skills, inclusi modulo Scrum e guide SBOK.
+Appunti delle lezioni e materiale teorico su competenze trasversali, adattabilità, lavoro di gruppo e certificazioni Scrum.
 
-Il progetto di gruppo **"Gli Sviluppatori Anonimi"** (in `03_Progetto_Gruppo/`) contiene:
+Il progetto di gruppo **"Gli Sviluppatori Anonimi"** contiene:
 - analisi e documentazione del progetto
-- mockup desktop e mobile (homepage, profilo, pannello amministrativo)
-- artefatti Scrum: user story, sprint backlog, sprint planning, roadmap e scrum board
+- mockup desktop e mobile
+- artefatti Scrum: user story, sprint backlog, sprint planning, roadmap
 
 ### brainstack-programming-notions
-Submodule git con appunti di programmazione C e C++: OOP, puntatori, referenze, allocazione dinamica, floating point e IEEE 754.
+Submodule git con appunti di programmazione C e C++.
 
 ---
 
