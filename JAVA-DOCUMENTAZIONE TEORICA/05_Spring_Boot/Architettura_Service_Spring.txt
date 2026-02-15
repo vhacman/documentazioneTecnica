@@ -1,0 +1,125 @@
+scriviamo entità
+scriviamo repository
+
+
+il dto va dal package api al package service
+
+com.generation.pcwizard.service.dto
+
+
+
+La differenza principale tra @Component e @Service in Spring Boot è di natura semantica e organizzativa piuttosto che funzionale
+
+
+Dal punto di vista tecnico, @Service è una specializzazione di @Component. Entrambe le annotazioni funzionano allo stesso modo: marcano una classe come bean gestito da Spring, rendendola disponibile per l'iniezione delle dipendenze attraverso il container Spring. Quando Spring esegue la scansione delle classi, rileva entrambe le annotazioni e crea automaticamente i bean corrispondenti nel contesto applicativo
+
+@Service viene utilizzata specificamente per marcare le classi che appartengono al service layer e contengono la business logic dell'applicazione.
+
+
+@Component, invece, è un'annotazione generica che può essere utilizzata per qualsiasi bean che non rientra in una categoria specifica. È appropriata per classi di utilità, helper, validator personalizzati, event listener, o componenti che non appartengono chiaramente ai layer di servizio, persistenza o presentazione.
+
+
+il service è l'unico a poter toccare il repository. le aèpi non toccano direttamente il repository ma passano per il service
+il service contiene la logica di gestione dati oltre il banale crud, contiene controlli, logica e manipolazioni. Ciò che è CRUD va in repository, in tutto il resto va in service.
+i metodi del service non saranno mappati
+
+
+per esempio ProcessorDTO insert(ProcessorDTO dto) throws Service Exception.
+che creiamo
+package com.generation.pcwizard.service;
+
+public class MyServiceException extends Exception {
+
+    /**
+     *
+     */
+    private static final long serialVersionUID = 1L;
+
+    public ServiceException(String message) {
+        super(message);
+    }
+}
+
+
+
+
+@Service
+public class ProcessorService {
+
+    @Autowired
+    ProcessorRepository processorRepo;
+
+    @Autowired
+    ProcessorDTOMapper processorMapper;
+
+    /**
+     * Io sono un service, io non parlo di request e response.
+     * Io ricevo DTO, produco DTO
+     * @param dto
+     * @return
+     */
+    public ProcessorDTO insert(ProcessorDTO dto) throws MyServiceException {
+        // la logica di controllo va messa qui dentro
+        if(dto.getStatus()==null || dto.getStatus().isEmpty())
+            dto.setStatus("AVAILABLE");
+
+        if(processorRepo.exists(dto.getName()))
+            throw new MyServiceException("Processor already present");
+
+        Processor processor = processorMapper.toEntity(dto);
+
+        if(!processor.isValid())
+            throw new MyServiceException("Invalid processor");
+
+        return processorMapper.toDto(processorRepo.save(processor));
+    }
+}
+
+
+alidazione dello status: Se lo status è null o vuoto, lo imposta automaticamente a "AVAILABLE"
+
+Controllo duplicati: Verifica se esiste già un processore con lo stesso nome tramite processorRepo.exists(dto.getName())
+
+Conversione DTO → Entity: Usa il mapper per convertire il DTO in entità
+
+Validazione dell'entità: Controlla se il processore è valido tramite processor.isValid()
+
+Salvataggio e restituzione: Salva l'entità nel database e riconverte il risultato in DTO
+
+
+
+
+
+
+
+il servizio non parla col web
+
+
+le api parlano http
+
+
+
+
+si lavora sempre su un db di test
+
+let tests = [
+    new Test(
+        "Test Create Processor",
+        "http://localhost:8080/pcwizard/api/processors",
+        "POST",
+        200,
+        processor=>processor.id>0 && processor.name=="I7 13K" && processor.price==200 && processor.benchmark==15000,
+        {name:'I7 13K', benchmark:15000, price:200}
+    ),
+];
+
+for(let t of tests)
+    t.run();
+
+
+
+
+
+
+
+

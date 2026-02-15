@@ -1,0 +1,76 @@
+Nel contesto di un'applicazione per la gestione di ristoranti, la modellazione delle relazioni tra entità rappresenta un passaggio fondamentale per garantire coerenza dei dati e prestazioni ottimali.
+la relazione tra città e ristorante è di tipo uno a molti bidirezionale, dove una città può contenere numerosi ristoranti ma ogni ristorante appartiene necessariamente a una sola città. Questa bidirezionalità consente di navigare la relazione in entrambe le direzioni, permettendo di accedere ai ristoranti di una città e di risalire dalla singola attività alla città che la ospita.
+
+La strategia di caricamento dei dati associati può essere configurata come eager o lazy, scelta che dipende strettamente dal caso d'uso specifico. Considerando uno scenario reale in cui un utente apre l'applicazione e si trova nella propria città, il sistema deve essere in grado di visualizzare immediatamente i ristoranti disponibili nella zona. Ogni ristorante è caratterizzato da attributi essenziali quali nome, email, password, indirizzo e il riferimento alla città di appartenenza. La struttura relazionale si estende ulteriormente considerando che ogni ristorante può servire molteplici piatti, mentre ogni piatto è associato esclusivamente a un singolo ristorante. Anche in questo caso la bidirezionalità permette di accedere ai piatti di un ristorante e di risalire dal piatto al ristorante che lo offre.
+
+L'architettura del sistema prevede l'utilizzo di oggetti di trasferimento dati, i DTO, che rappresentano una versione semplificata delle entità destinate alla comunicazione tra strati applicativi. L'obiettivo principale è ridurre il numero di richieste al database, poiché la migliore ottimizzazione consiste proprio nel minimizzare le chiamate remote. Per questo motivo il DTO della città non rappresenta semplicemente una copia dell'entità originale, ma viene arricchito per includere anche i ristoranti e i relativi piatti, aggregando così tutte le informazioni necessarie in un'unica struttura.
+
+La definizione fisica dell'entità Restaurant nel progetto richiede l'utilizzo di annotazioni JPA specifiche. L'annotazione JoinColumn specifica quale colonna della tabella corrente rappresenta il collegamento alla chiave primaria dell'entità correlata, permettendo al framework di gestire automaticamente le relazioni durante le operazioni di persistenza. Questa annotazione viene impiegata in combinazione con altre come ManyToOne, OneToMany, OneToOne e ManyToMany per definire la chiave esterna che realizza il join tra le tabelle.
+
+Dopo aver definito l'entità è necessario creare il repository corrispondente, componente fondamentale per la permanenza dei dati. Il RestaurantRepository estende JpaRepository, ereditando così tutte le operazioni CRUD di base senza necessità di implementazione manuale. La progettazione delle API rappresenta invece l'ultimo passo, poiché costituisce il punto di contatto con il mondo esterno.
+
+Il RestaurantDTO viene progettato includendo gli attributi identificativi del ristorante e un riferimento all'oggetto CityDTO. Questa scelta evita caricamenti circolari e mantiene la struttura leggera, includendo solo le informazioni essenziali della città senza ricaricare l'intero grafo di oggetti. Il mapper associato si occupa della conversione bidirezionale tra entità e DTO. Nella conversione da DTO a entità, se è presente un identificativo di città valido, il sistema interroga il repository per recuperare l'entità completa e associarla al ristorante. È possibile estendere questa logica per cercare la città anche tramite nome qualora l'identificativo non sia disponibile. Nella direzione opposta, dalla entità al DTO, vengono estratti solo gli attributi necessari della città, popolando un nuovo oggetto CityDTO con identificativo, nome e provincia.
+
+La gestione della sicurezza richiede particolare attenzione nel trattamento delle password. Durante la conversione verso il DTO la password non viene mai inclusa, garantendo che informazioni sensibili non vengano esposte attraverso le API. Al contrario, durante la ricezione di dati dal client, la password viene acquisita ma immediatamente sottoposta a hashing prima della persistenza. Per questo scopo è necessario aggiungere al file di configurazione Maven la dipendenza commons-codec, libreria che fornisce implementazioni di algoritmi di hashing. Il file pom.xml, scritto in XML che è un metalinguaggio utilizzato per definire altri linguaggi simili a HTML, permette di gestire le dipendenze del progetto che vengono automaticamente scaricate da Maven.
+
+L'implementazione dell'API REST per la creazione di nuovi ristoranti prevede l'utilizzo dell'annotazione RestController e la definizione del percorso base tramite RequestMapping. Il metodo dedicato alla registrazione riceve un DTO tramite RequestBody, lo converte nell'entità corrispondente utilizzando il mapper, procede con l'hashing della password attraverso un componente dedicato chiamato MD5Hasher, salva l'entità nel database e infine restituisce il DTO aggiornato al client. Questo flusso garantisce che la password non venga mai memorizzata in chiaro e che il client riceva una rappresentazione sicura dell'oggetto appena creato. Rimane da implementare un endpoint GET per recuperare un ristorante specifico tramite il suo identificativo, completando così le operazioni CRUD di base per questa entità.
+Gestione Relazioni e Ottimizzazione API in JavaEat
+Architettura delle Relazioni tra Entità
+Nel nostro progetto JavaEat, il modello dati si articola attorno a tre entità principali che interagiscono tra loro attraverso relazioni bidirezionali. La prima relazione fondamentale è quella tra City e Restaurant: una città può contenere molti ristoranti, ma ogni ristorante appartiene a una sola città. Questa caratteristica di bidirezionalità permette di navigare la relazione in entrambe le direzioni, ovvero dalla città ai suoi ristoranti e dal ristorante alla sua città di appartenenza. La seconda relazione altrettanto importante è quella tra Restaurant e Dish: un ristorante può servire molti piatti, ma ogni piatto è associato a un solo ristorante, garantendo anche in questo caso la possibilità di accedere ai piatti di un ristorante e di risalire dal piatto al ristorante che lo serve.
+Strategia di Ottimizzazione: CityDTO Comprensivo
+L'obiettivo primario del nostro sistema è ridurre drasticamente il numero di richieste HTTP verso il server. Immaginiamo uno scenario d'uso realistico: un utente apre l'applicazione e, considerando che si trova a casa sua, desidera visualizzare i ristoranti disponibili nella propria città al momento della registrazione. Per ottimizzare questo flusso di dati, abbiamo deciso di modificare CityDTO trasformandolo da semplice rappresentazione dell'entità City a un oggetto complesso che include anche i ristoranti e, potenzialmente, i loro piatti. Questa strategia permette di caricare in un'unica richiesta tutte le informazioni necessarie, eliminando il bisogno di chiamate multiple per ottenere dati correlati.
+Implementazione dell'Entità Restaurant
+L'entità Restaurant è stata fisicamente implementata nel progetto seguendo il nostro data model. Un ristorante nel nostro sistema è caratterizzato dai seguenti attributi: name (String), email (String), password (String), address (String) e una relazione con l'entità City. Per definire questa relazione nel database, utilizziamo l'annotazione @JoinColumn di JPA, che specifica la colonna utilizzata per collegare due entità. Questa annotazione lavora in combinazione con @ManyToOne per indicare quale colonna nella tabella corrente rappresenta il collegamento alla chiave primaria dell'entità correlata, permettendo a Hibernate di gestire automaticamente le relazioni durante le operazioni di persistenza.
+Layer di Accesso ai Dati: RestaurantRepository
+Dopo aver creato l'entità, abbiamo implementato il repository corrispondente che si occupa della permanenza dei dati. RestaurantRepository estende JpaRepository, ereditando tutte le operazioni CRUD di base senza necessità di implementarle manualmente. Questo repository diventa il punto centrale per tutte le operazioni di persistenza relative ai ristoranti, garantendo separation of concerns e codice più pulito e manutenibile.
+Data Transfer Object: RestaurantDTO
+Per gestire il trasferimento dei dati tra client e server, abbiamo creato RestaurantDTO con la seguente struttura:
+public class RestaurantDTO {
+    int id;
+    String name, email, pw, address;
+    CityDTO city;
+}
+Questa struttura è stata preferita rispetto a campi separati come cityId, cityName e cityProvince perché permette una gestione più pulita e modulare dei dati. L'utilizzo di un oggetto CityDTO annidato migliora la leggibilità e facilita la serializzazione/deserializzazione JSON.
+Mapping Bidirezionale: RestaurantDTOMapper
+Il mapper gestisce la conversione bidirezionale tra entità e DTO. Il metodo fromDTO converte un RestaurantDTO in entità Restaurant, gestendo anche il caricamento della città associata verificando l'ID fornito:
+public Restaurant fromDTO(RestaurantDTO dto) {
+    Restaurant r = new Restaurant();
+    r.setId(dto.getId());
+    r.setName(dto.getName());
+    r.setAddress(dto.getAddress());
+    r.setEmail(dto.getEmail());
+
+    if(dto.getCity().getId() > 0) {
+        Optional<City> cityOpt = cityRepo.findById(dto.getCity().getId());
+        if(cityOpt.isPresent())
+            r.setCity(cityOpt.get());
+    }
+    return r;
+}
+Il metodo toDTO esegue la conversione inversa, notiamo che non include mai la password per ragioni di sicurezza, garantendo che le credenziali non vengano mai esposte nelle risposte API.
+API REST: RestaurantAPI
+Il controller REST espone gli endpoint per la gestione dei ristoranti:
+@RestController
+@RequestMapping("/javaeat/api/restaurants")
+public class RestaurantAPI {
+    @Autowired
+    RestaurantRepository restaurantRepo;
+
+    @Autowired
+    RestaurantDTOMapper restaurantDTOMapper;
+
+    @Autowired
+    MD5Hasher hasher;
+
+    @PostMapping
+    public RestaurantDTO newRestaurant(@RequestBody RestaurantDTO dto) {
+        Restaurant restaurant = restaurantDTOMapper.fromDTO(dto);
+        String passwordHash = hasher.hash(restaurant.getPw());
+        restaurant.setPw(passwordHash);
+        restaurant = restaurantRepo.save(restaurant);
+        return restaurantDTOMapper.toDTO(restaurant);
+    }
+}
+---
+Novità della Versione Corrente del Progetto
+Rispetto agli appunti iniziali, il progetto ha subito significative evoluzioni che meritano attenzione. CityDTO è stato completamente riprogettato per fungere da aggregatore principale: ora non rappresenta più solo la città, ma include nativamente la lista dei ristoranti associati e, potenzialmente, i loro piatti, eliminando il problema delle richieste multiple. Il sistema di autenticazione è stato rafforzato con l'hashing obbligatorio delle password, implementato tramite il servizio MD5Hasher che intercetta ogni tentativo di registrazione prima del salvataggio. La struttura delle API è stata ampliata con endpoint GET per recuperare ristoranti tramite ID, permettendo operazioni di lettura granulari oltre alla sola creazione. Infine, il CityService è stato potenziato per gestire operazioni composite come il caricamento eager di città con ristoranti e piatti, ottimizzando i query Hibernate per minimizzare il problema N+1 e garantire performance ottimali anche con dataset di dimensioni significative.

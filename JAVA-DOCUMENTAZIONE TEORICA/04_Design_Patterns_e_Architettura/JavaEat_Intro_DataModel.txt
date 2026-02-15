@@ -1,0 +1,89 @@
+Il progetto riguarda la realizzazione di JustEat in linguaggio Java.
+
+Il data model è un'astrazione che descrive come i dati vengono organizzati, memorizzati e manipolati all'interno di un sistema informatico. A livello teorico, si può distinguere in tre livelli. Il primo livello è quello concettuale che descrive quali dati esistono e quali relazioni intercorrono tra loro, indipendentemente dalla tecnologia utilizzata, ed è una rappresentazione ad alto livello che coinvolge stakeholder tecnici e non tecnici.
+
+Il secondo livello è quello logico che definisce la struttura dei dati in modo formale, specificando tipi, attributi e vincoli, rimanendo ancora indipendente dal sistema di persistenza concreto. Il terzo livello è quello fisico che descrive come i dati vengono effettivamente memorizzati su supporti fisici, includendo indici, partizionamenti e ottimizzazioni specifiche del database.
+
+Il data model serve a garantire coerenza, integrità e comprensione condivisa dei dati all'interno di un'organizzazione o di un progetto software.
+Ogni ristorante possiede due coordinate geografiche sulla mappa.
+Per distanze brevi è possibile utilizzare la geometria euclidea, cosa che non si può fare considerando l'intera superficie terrestre a causa della sua curvatura. I ristoranti sono quindi geolocalizzati e la loro posizione influenza la disponibilità di servizio in base a un raggio specifico, ad esempio per determinare se la consegna è gratuita.
+
+Le entità principali del progetto sono quattro.
+
+Restaurant
+rappresenta il fornitore di cibo e sarà geolocalizzato.
+Rider
+è il corriere che può operare in diverse città.
+Customer
+è il cliente che effettua gli ordini. Dish è il piatto e ogni ristorante può avere molti piatti nel proprio menu.
+Delivery
+è un'entità che rappresenta il rapporto tra le altre entità principali. Delivery è figlia di Restaurant perché un ristorante può produrre molte consegne, ed è figlia di Rider perché un rider può effettuare molte consegne. Delivery è inoltre figlia di Customer perché un cliente può ricevere molte consegne. A sua volta, Delivery è padre di n piatti, poiché un ordine può contenere diversi piatti.
+
+Sia il customer che il ristorante e il rider sono utenti che possono effettuare il login nel sistema. Il ristorante deve poter visualizzare gli ordini che riceve, il rider deve poter vedere gli ordini da consegnare e il cliente deve poter visualizzare informazioni come il tempo stimato per la consegna dell'ordine. L'applicazione presenta quindi contenuti diversi in base al tipo di utente loggato e di conseguenza vengono utilizzati diversi DTO per rappresentare le stesse entità in modalità differenti.
+
+La architettura del sistema prevede un approccio metodico dove si analizza un requisito alla volta, studiando prima il dominio del problema e poi passando al dominio della soluzione, ovvero alla traduzione in codice del problema identificato. In progetti di questa complessità è consigliabile cominciare dalle entità più semplici per poi costruire progressivamente la comprensione dell'intero sistema.
+
+Uno dei requisito analizzato riguarda la gestione dell'autenticazione. Le password devono essere sottoposte a hashing e deve essere possibile effettuare il login. Questo significa che le credenziali degli utenti devono essere memorizzate in modo sicuro e il sistema deve essere in grado di verificare l'identità di chi tenta di accedere
+
+Anche Entità CITY
+
+DATA MODEL PER RESTAURANT
+Il data model per l'entità Restaurant comprende diversi campi che descrono le caratteristiche del ristorante.
+Il campo Name contiene il nome del ristorante come stringa.
+Il campo City indica la città in cui si trova il ristorante.
+Il campo Address specifica l'indirizzo completo.
+Per quanto riguarda le coordinate geografiche, vengono utilizzati due campi x e y di tipo intero che rappresentano la posizione sulla mappa.
+Per i dati di accesso sono presenti due campi, Email e password, dove la password dovrà essere sottoposta a hashing e per semplicità verrà utilizzato l'algoritmo MD5.
+
+A questi campi si aggiungono il tipo di cucina, il prezzo medio e le recensioni che sono stati inseriti come campi aggiuntivi.
+
+Il sistema prevede le operazioni CRUD sui ristoranti, acronimo che sta per Create, Read, Update e Delete.
+L'operazione Create permette di creare un nuovo ristorante nel sistema inserendo tutti i dati necessari.
+L'operazione Read consente di leggere i dati di uno o più ristoranti, sia per visualizzare l'elenco completo che per cercare un ristorante specifico.
+L'operazione Update permette di modificare i dati di un ristorante già esistente nel sistema, come ad esempio l'indirizzo, il nome o le coordinate.
+L'operazione Delete consente di eliminare un ristorante dal sistema quando non è più necessario o attivo.
+
+
+City diventa una entità, e sarà padre di restaurant, cosi posso inserre i ristoranti come lista
+Uno stream in Java è un flusso di dati che permette di elaborare collezioni in modo dichiarativo,
+trasformando una sequenza di elementi attraverso operazioni intermedie (come map, filter) e una operazione terminal
+(come toList). Nel codice, cities.stream() converte la lista in uno stream, permettendo di applicare trasformazioni a ogni elemento.
+L'operatore :: è il method reference, una sintassi abbreviata per riferirsi a un metodo. this::toDTO significa"chiama il metodo toDTO di questa istanza su ogni elemento". È equivalente a scrivere city -> this.toDTO(city), ma più conciso e leggibile
+
+@PathVariable è un'annotazione di Spring MVC che legge porzioni dell'URL (detto "path") e le passa come parametri ai metodi del controller.
+@RequestBody indica a Spring MVC di leggere il corpo della richiesta HTTP e deserializzarlo automaticamente in un oggetto Java. Viene usato tipicamente con richieste POST o PUT per ricevere dati JSON (o altri formati) dal client e convertirli in un'istanza della classe specificata.
+
+
+@PatchMapping è un'annotazione Spring MVC che gestisce richieste HTTP PATCH. Questo metodo HTTP viene usato per applicare modifiche parziali a una risorsa esistente, contrariamente a PUT che tipicamente sostituisce l'intera risorsa.
+
+
+Con una richiesta PATCH puoi inviare solo i campi da modificare, ad esempio {"population":3000000}, e il server aggiornerà solo quel campo lasciando gli altri inalterati.
+
+Quando implementi un endpoint PATCH per aggiornare parzialmente una città, il flusso tipico è il seguente: prima recuperi l'entità dal database usando il repository, se non viene trovata restituisci una risposta 404 (Not Found), altrimenti estrai il contenuto della richiesta per ottenere il nuovo valore della provincia, aggiorni quel campo specifico sull'entità esistente, salvi le modifiche con il repository e infine restituisci il DTO aggiornato al client. Questo approccio garantisce che vengano modificati solo i campi presenti nella richiesta, preservando tutti gli altri valori esistenti dell'entità.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

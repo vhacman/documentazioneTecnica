@@ -1,0 +1,36 @@
+Appunti  12-02-26
+
+
+L'endpoint testing consiste in un file JSON che permette di verificare le risposte delle chiamate effettuate, controllando che le response siano conformi alle aspettative.
+
+
+
+
+
+Progetto PcWizard
+------------------
+
+Il progetto riguarda un configuratore per PC basato su API, con PC preconfigurati caratterizzati da relazioni asimmetriche tra i componenti.
+
+Il rapporto tra CPU e PC è monodirezionale con cardinalità uno a molti: un PC contiene una sola CPU, ma una CPU può essere utilizzata da più PC. Di conseguenza, il PC conosce la propria CPU, mentre la CPU non conserva la lista dei PC che la utilizzano. Lo stesso schema si ripete per la relazione tra RAM e PC, anch'essa monodirezionale con cardinalità uno a molti. Analogo discorso vale per il rapporto tra SSD e PC, sempre di tipo uno a molti e monodirezionale, dove i componenti sono legati al PC attraverso rapporti d'uso. La CPU non presenta campi relazionali espliciti proprio in virtù della natura monodirezionale del suo rapporto con il PC.
+
+
+Un principio fondamentale è la necessità di separare la business logic dal controller, adottando un'architettura a livelli dove ogni strato è cliente di quello sottostante e fornitore di quello superiore, concentrandosi su una responsabilità specifica.
+
+
+L'architettura a quattro livelli introduce uno schema strutturato con responsabilità distinte. Il CLIENT costituisce il livello di presentazione e gestisce esclusivamente l'interazione con l'utente finale, inviando request e ricevendo response in formato JSON. L'API rappresenta il controller layer e si occupa di gestire le richieste HTTP, la validazione dei dati e la mappatura dei metodi, fungendo da intermediario che decide quali service chiamare. Il SERVICE contiene la business logic separata dall'API, implementando tutte le regole di business dell'applicazione. Il REPOSITORY costituisce il livello di accesso ai dati e gestisce la comunicazione con il database attraverso query SQL.
+La separazione tra API e SERVICE offre benefici significativi. L'API gestisce solo richieste e risposte HTTP, mentre il SERVICE contiene tutta la logica di business. I servizi possono essere riutilizzati da diversi controller o da altre applicazioni. La logica di business può essere testata indipendentemente dal layer HTTP. Questa struttura facilita inoltre l'adozione di architetture orientate ai servizi.
+
+
+Il flusso dei dati attraverso l'architettura segue percorsi ben definiti. Il CLIENT invia una REQUEST contenente DTO, che l'API riceve estraendo i dati. L'API passa questi DTO al SERVICE, dove avviene la conversione in ENTITY e l'applicazione della logica di business. Il SERVICE comunica con il REPOSITORY utilizzando le ENTITY per operazioni di lettura o scrittura. Il REPOSITORY esegue le query SQL sul database, riceve ROWS e le converte in ENTITY, che risalgono verso il SERVICE per l'elaborazione. Infine, l'API riceve i DTO elaborati dal SERVICE e li inserisce nella RESPONSE restituita al CLIENT.
+
+
+
+Per lavorare con le entità è necessario definire prima gli oggetti del dominio che rappresentano i dati persistenti dell'applicazione. Una volta create le entità, si procede con la scrittura del repository che gestisce le operazioni di accesso al database.
+Il DTO viaggia dal package API al package service attraverso una struttura organizzata nel package com.generation.pcwizard.service.dto. Questo percorso definisce il flusso dei dati tra i diversi layer dell'applicazione.
+La differenza principale tra @Component e @Service in Spring Boot è di natura semantica e organizzativa piuttosto che funzionale. Dal punto di vista tecnico, @Service è una specializzazione di @Component. Entrambe le annotazioni funzionano allo stesso modo, poiché marcano una classe come bean gestito da Spring, rendendola disponibile per l'iniezione delle dipendenze attraverso il container Spring. Quando Spring esegue la scansione delle classi, rileva entrambe le annotazioni e crea automaticamente i bean corrispondenti nel contesto applicativo. @Service viene utilizzata specificamente per marcare le classi che appartengono al service layer e contengono la business logic dell'applicazione. @Component, invece, è un'annotazione generica che può essere utilizzata per qualsiasi bean che non rientra in una categoria specifica, come classi di utilità, helper, validator personalizzati, event listener, o componenti che non appartengono chiaramente ai layer di servizio, persistenza o presentazione.
+Il service è l'unico layer che può interagire con il repository. Le API non toccano direttamente il repository ma passano attraverso il service. Il service contiene la logica di gestione dati oltre il banale CRUD, includendo controlli, logica e manipolazioni complesse. Ciò che è strettamente CRUD va nel repository, mentre tutto il resto va nel service. I metodi del service non saranno mappati poiché operano esclusivamente con DTO e non hanno alcuna conoscenza delle request e response HTTP.
+Di seguito viene riportato un esempio di definizione di eccezione personalizzata per il service. Si crea un package com.generation.pcwizard.service dove viene definita la classe MyServiceException che estende Exception. Questa eccezione contiene un identificativo seriale per la serializzazione e accetta un messaggio nel costruttore.
+
+Il ProcessorService implementa la logica di business per i processori. Viene annotato con @Service e utilizza l'Autowired per iniettare le dipendenze del ProcessorRepository e del ProcessorDTOMapper. Il service non parla mai di request e response HTTP, ma riceve esclusivamente DTO e produce DTO. Il metodo insert accetta un ProcessorDTO e restituisce un ProcessorDTO, lanciando MyServiceException in caso di errori. La logica implementata prevede la validazione dello status, impostandolo automaticamente a "AVAILABLE" se è nullo o vuoto, il controllo dei duplicati verificando se esiste già un processore con lo stesso nome tramite processorRepo.exists, la conversione del DTO in entity utilizzando il mapper, la validazione dell'entità tramite il metodo isValid, e infine il salvataggio dell'entità nel database con la riconversione del risultato in DTO da restituire.
+Le API parlano esclusivamente il protocollo HTTP, mentre il service non ha alcuna conoscenza del livello web. Si lavora sempre su un database di test per verificare il corretto funzionamento dell'applicazione. I test vengono definiti come array di oggetti Test, ciascuno contenente un nome descrittivo, l'URL dell'endpoint da testare, il metodo HTTP da utilizzare, il codice di stato atteso, una funzione di validazione che verifica i dati della risposta, e i dati da inviare nel corpo della richiesta. I test vengono poi eseguiti iterando sull'array e chiamando il metodo run su ciascun test.
