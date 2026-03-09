@@ -19,23 +19,35 @@ JAVA-DOCUMENTAZIONE TEORICA/      Appunti completi sul corso Java e Spring Boot
     ├── Appunti/                  Appunti lezioni Angular
     └── Appunti Libro/            Appunti capitoli libro Angular
 
+APPUNTI/                          Appunti lezioni organizzati per mese
+├── FEBBRAIO/
+│   ├── Appunti 20-02-26/
+│   ├── Appunti del 23-02-26/
+│   ├── Appunti 25-02-26/
+│   ├── Appunti 26-02-26/
+│   └── Appunti 27-02-26/
+└── MARZO/
+    ├── Appunti 02-03-26/
+    ├── Appunti del 04-03-26/
+    ├── Appunti del 05-03-26/
+    ├── Appunti del 06-03-26/
+    └── Appunti del 09-03-26/
+
 SOFTSKILL/                        Appunti lezioni e materiale progetto di gruppo
+└── 03_Progetto_Gruppo/
+    └── Mockup/                   Mockup UI del progetto
+        ├── admin/                Pannello amministrativo
+        ├── articolo/             Pagina articolo
+        ├── gruppi/               Pagina gruppi
+        ├── Homepage/
+        ├── Logo/
+        ├── Profilo/
+        └── social/
 
 brainstack-programming-notions/   Submodule: appunti C/C++
 
-Appunti del 23-02-26/            Appunti lezione 23 febbraio 2026
-Appunti 25-02-26/                Appunti lezione 25 febbraio 2026 (mattina e pomeriggio)
-
-LibroAngularFerdinando/          (ignorato da git)
+LibroAngularFerdinando/           (ignorato da git)
 ```
-
-## Appunti sciolti
-
-| File | Descrizione |
-|------|-------------|
-| `Appunti 20-02-26.pdf` | Appunti lezione 20 febbraio 2026 |
-| `Appunti 20-02-26 pt 2.pdf` | Appunti lezione 20 febbraio 2026 (parte 2) |
-| `Gli appunti di Marilu.pdf` | Appunti di Marilucia |
 
 ## Setup
 
