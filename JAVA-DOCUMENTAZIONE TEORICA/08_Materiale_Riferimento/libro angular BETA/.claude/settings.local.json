@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python \"/c/Users/coral/Desktop/documentazioneTecnica/JAVA-DOCUMENTAZIONE TEORICA/08_Materiale_Riferimento/libro angular BETA\" 2>&1; which python; python --version 2>&1)",
+      "Bash(node --version 2>&1 && node -e \"\nconst fs = require\\('fs'\\);\nconst path = require\\('path'\\);\nconst AdmZip = require ? 'ok' : 'no';\nconsole.log\\('node ok'\\);\n\")",
+      "Bash(cd \"/c/Users/coral/Desktop/documentazioneTecnica/JAVA-DOCUMENTAZIONE TEORICA/08_Materiale_Riferimento/libro angular BETA\" && node -e \"\nconst fs = require\\('fs'\\);\nconst path = require\\('path'\\);\nconst { execSync } = require\\('child_process'\\);\n\n// Try to extract text from docx using unzip and xml parsing\nconst files = fs.readdirSync\\('.'\\).filter\\(f => f.endsWith\\('.docx'\\)\\);\nfiles.forEach\\(f => {\n  console.log\\('=== ' + f + ' ==='\\);\n  try {\n    // Read as zip and extract document.xml\n    const data = fs.readFileSync\\(f\\);\n    // Find word/document.xml in the zip\n    // Simple approach: find text between <w:t> tags\n    const str = data.toString\\('latin1'\\);\n    const matches = [];\n    let i = 0;\n    while \\(i < str.length\\) {\n      const start = str.indexOf\\('<w:t', i\\);\n      if \\(start === -1\\) break;\n      const gt = str.indexOf\\('>', start\\);\n      const end = str.indexOf\\('</w:t>', gt\\);\n      if \\(end === -1\\) break;\n      const text = str.substring\\(gt + 1, end\\);\n      if \\(text.trim\\(\\)\\) matches.push\\(text\\);\n      i = end + 6;\n    }\n    console.log\\(matches.join\\(' '\\).substring\\(0, 4000\\)\\);\n  } catch\\(e\\) {\n    console.log\\('Error:', e.message\\);\n  }\n  console.log\\(\\);\n}\\);\n\")",
+      "Bash(cd \"/c/Users/coral/Desktop/documentazioneTecnica/JAVA-DOCUMENTAZIONE TEORICA/08_Materiale_Riferimento/libro angular BETA\" && node -e \"\nconst fs = require\\('fs'\\);\n// Read docx as buffer and search for text\nconst data = fs.readFileSync\\('Angular 2025 - per Generation - Capitolo 1 - Introduzione e primi componenti.docx'\\);\nconsole.log\\('File size:', data.length\\);\n// Check magic bytes \\(ZIP = PK\\)\nconsole.log\\('Magic:', data.slice\\(0,4\\).toString\\('hex'\\)\\);\n\n// Try to find text using Buffer\nconst buf = data;\nconst tag = Buffer.from\\('<w:t'\\);\nlet pos = buf.indexOf\\(tag\\);\nconsole.log\\('First w:t pos:', pos\\);\n\")",
+      "Bash(powershell -File /tmp/extract_docx2.ps1 2>&1 | head -200)",
+      "Bash(pandoc --version 2>&1 | head -3)",
+      "Bash(powershell -Command \"Get-Command pandoc -ErrorAction SilentlyContinue\")",
+      "Bash(powershell -File /tmp/md_to_docx.ps1 2>&1)",
+      "Bash(ls \"/c/Users/coral/Desktop/documentazioneTecnica/JAVA-DOCUMENTAZIONE TEORICA/08_Materiale_Riferimento/libro angular BETA/\"*.md \"/c/Users/coral/Desktop/documentazioneTecnica/JAVA-DOCUMENTAZIONE TEORICA/08_Materiale_Riferimento/libro angular BETA/\"*.docx 2>&1)"
+    ]
+  }
+}
